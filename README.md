@@ -1,25 +1,23 @@
-<center>
-    <img alt="Logo" src="assets/logo.png" width="512" height="512" style="margin: 0; padding: 0"/>
-    <p style="font-size: 50px; font-weight: 800; margin: 0; padding: 0">BlockProbe - Tests that run inside your Hytale world</p>
-    <p style="font-size: xx-large; margin: 0; padding: 0; padding-bottom: 20px">Unit‑style tests executed directly inside a live Hytale world.</p>
-</center>
+<p align="center">
+  <img src="assets/logo.png" width="512" height="512" />
+</p>
+
+# BlockProbe - Tests that run inside your Hytale world
 
 BlockProbe lets you write familiar unit tests while interacting with real blocks, entities, inventories, and game logic — no mocks, no abstractions, just true in‑world behavior.
 
 ### Disclaimer
 Logo created with AI. **Absolutely zero** code was written by or with the help of AI. I'm a crappy artist, sorry.
 
-### About
+### Preamble
 
 Traditional unit tests force you to mock or abstract away the world. That works for isolated logic, but it can never validate the full behavior.
-
-With BlockProbe, your tests run in‑game, inside an actual Hytale world. You can place blocks, interact with inventories, spawn entities, wait for conditions, and assert the real outcomes — all using well-known testing syntax.
-
+With BlockProbe, your tests run in‑game, inside an actual Hytale world. You can place blocks, interact with inventories, spawn entities, wait for conditions, and assert the outcome — all using well-known testing syntax.
 This enables true end‑to‑end testing of your mod’s gameplay logic.
 
 ### Example
 
-Imagine you’re building a pipe plugin to transfer items between chests.
+Imagine you’re building a pipe mod to transfer items between chests.
 Instead of mocking inventories and simulating ticks, you can:
 
 - Place two chests and a pipe in the world
@@ -27,23 +25,44 @@ Instead of mocking inventories and simulating ticks, you can:
 - Wait for the chest to clear of items
 - Assert that the second chest contains the transferred items
 
-All inside a normal unit-test method:
+All inside a regular test method:
+
+```kotlin
+@Test
+@Timeout(10)
+fun testPipeTransfersItems(context: WorldInteractionContext) {
+    // Arrange
+    context
+        .setBlock(Position.Zero, "Furniture_Crude_Chest_Small")
+        .setBlock(Direction.Right, "Pipe_Item")
+        .setBlock(Direction.Right, "Furniture_Crude_Chest_Small")
+
+    // Act
+    context.addItemToBlockInventory(Position.Zero, ItemStack("Ore_Adamantite", 10))
+    context.waitUntil(InventoryEmptyWaitCondition(Position.Zero))
+
+    // Assert
+    assertInventoryContainsItems(Position(2, 0, 0), false, ItemStack("Ore_Adamantite", 10))
+}
+```
+
+Or, using Java if you prefer:
 
 ```java
 @Test
-public void testPipeTransfersItems() {
-// Arrange
-world.placeBlock(posA, CHEST);
-world.placeBlock(posB, PIPE);
-world.placeBlock(posC, CHEST);
+public void testPipeTransfersItems(WorldInteractionContext context) {
+    // Arrange
+    context
+            .setBlock(Position.Zero, "Furniture_Crude_Chest_Small")
+            .setBlock(Direction.Right, "Pipe_Item")
+            .setBlock(Direction.Right, "Furniture_Crude_Chest_Small");
 
-// Act
-world.getInventory(posA).add(itemStack);
-world.waitTicks(40);
+    // Act
+    context.addItemToBlockInventory(Position.Zero, new ItemStack("Ore_Adamantite", 10));
+    context.waitUntil(new InventoryEmptyWaitCondition(Position.Zero));
 
-// Assert
-assertTrue(world.getInventory(posA).isEmpty());
-assertEquals(itemStack, world.getInventory(posC).getFirst());
+    // Assert
+    assertInventoryContainsItems(new Position(2, 0, 0), false, new ItemStack("Ore_Adamantite", 10));
 }
 ```
 

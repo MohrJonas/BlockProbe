@@ -1,9 +1,9 @@
 package mohr.jonas.blockprobe.core.world
 
-import com.hypixel.hytale.math.vector.Vector3i
 import com.hypixel.hytale.server.core.inventory.ItemStack
 import com.hypixel.hytale.server.core.inventory.transaction.ItemStackTransaction
 import com.hypixel.hytale.server.core.universe.world.meta.state.ItemContainerState
+import mohr.jonas.blockprobe.core.data.Position
 import mohr.jonas.blockprobe.core.data.TestBedSize
 import mohr.jonas.blockprobe.core.fixture.TestBed
 import mohr.jonas.blockprobe.core.fixture.TestBedUtils
@@ -13,7 +13,7 @@ import java.time.Duration
 
 class WorldInteractionContext(private val testBed: TestBed) {
 
-    fun setBlock(position: Vector3i, blockId: String): PositionedWorldInteractionContext {
+    fun setBlock(position: Position, blockId: String): PositionedWorldInteractionContext {
         val unprojectedPosition = TestBedUtils.unproject(testBed, position)
         testBed.world.setBlock(
             unprojectedPosition.x,
@@ -24,7 +24,7 @@ class WorldInteractionContext(private val testBed: TestBed) {
         return PositionedWorldInteractionContext(this, position)
     }
 
-    fun addItemToBlockInventory(position: Vector3i, item: ItemStack): ItemStackTransaction {
+    fun addItemToBlockInventory(position: Position, item: ItemStack): ItemStackTransaction {
         val unprojectedPosition = TestBedUtils.unproject(testBed, position)
         return (testBed
             .world
@@ -47,5 +47,5 @@ class WorldInteractionContext(private val testBed: TestBed) {
             Thread.sleep(25)
     }
 
-    val bedSize = TestBedSize(testBed.boundingBox.width, testBed.boundingBox.height, testBed.boundingBox.depth)
+    val bedSize = TestBedSize(testBed.editableBoundingBox.width, testBed.editableBoundingBox.height, testBed.editableBoundingBox.depth)
 }

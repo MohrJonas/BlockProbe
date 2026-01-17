@@ -1,9 +1,9 @@
 package mohr.jonas.blockprobe.core.testing
 
-import com.hypixel.hytale.math.vector.Vector3i
 import com.hypixel.hytale.server.core.entity.entities.Player
 import com.hypixel.hytale.server.core.universe.world.World
 import mohr.jonas.blockprobe.core.data.BoundingBox
+import mohr.jonas.blockprobe.core.data.Position
 import mohr.jonas.blockprobe.core.data.TestStatus
 import mohr.jonas.blockprobe.core.fixture.TestBed
 import mohr.jonas.blockprobe.core.fixture.TestBedConstructor
@@ -17,7 +17,7 @@ class TestExecutionContext(val runner: TestRunner, val configuration: TestExecut
         runner.runTests(
             { testIdentifier, testResult ->
                 println("$testIdentifier: $testResult")
-                TestBedConstructor.setBedStatusBlock(
+                TestBedConstructor.setBedBorder(
                     getTestBedForTest(executingPlayer.world!!, testIdentifier),
                     getBlockIdForTestStatus(testResult.status)
                 )
@@ -36,10 +36,16 @@ class TestExecutionContext(val runner: TestRunner, val configuration: TestExecut
             return testBeds[testIdentifier]!!
         val newTestBed = TestBed(
             world, BoundingBox(
-                getOriginForTestBed(testBeds.size, configuration),
+                getOriginForTestBed(testBeds.size, configuration).add(1, 0, 1),
                 configuration.testBedWidth,
                 configuration.testBedHeight,
                 configuration.testBedDepth
+            ),
+            BoundingBox(
+                getOriginForTestBed(testBeds.size, configuration),
+                configuration.testBedWidth + 1,
+                configuration.testBedHeight,
+                configuration.testBedDepth + 1
             )
         )
         testBeds[testIdentifier] = newTestBed
@@ -47,21 +53,21 @@ class TestExecutionContext(val runner: TestRunner, val configuration: TestExecut
         return newTestBed
     }
 
-    private fun getOriginForTestBed(testBedIndex: Int, configuration: TestExecutionConfiguration): Vector3i {
+    private fun getOriginForTestBed(testBedIndex: Int, configuration: TestExecutionConfiguration): Position {
         val row = floor(testBedIndex.toDouble() / configuration.testBedsPerRow).toInt()
         val column = testBedIndex % configuration.testBedsPerRow
-        return Vector3i(
-            row * (configuration.testBedWidth + configuration.testBedSpacing),
+        return Position(
+            row * (configuration.testBedWidth + configuration.testBedSpacing + 2),
             configuration.testPlaneHeight,
-            column * (configuration.testBedDepth + configuration.testBedSpacing)
+            column * (configuration.testBedDepth + configuration.testBedSpacing + 2)
         )
     }
 
     private fun getBlockIdForTestStatus(status: TestStatus): String {
         return when (status) {
-            TestStatus.Skipped -> "Rock_Crystal_Purple_Medium"
-            TestStatus.Succeeded -> "Rock_Crystal_Green_Medium"
-            TestStatus.Failed -> "Rock_Crystal_Red_Medium"
+            TestStatus.Skipped -> "Cloth_Block_Wool_Yellow"
+            TestStatus.Succeeded -> "Cloth_Block_Wool_Green"
+            TestStatus.Failed -> "Cloth_Block_Wool_Red"
         }
     }
 }

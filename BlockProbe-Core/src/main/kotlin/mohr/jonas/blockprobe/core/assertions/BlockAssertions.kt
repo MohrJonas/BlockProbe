@@ -1,24 +1,24 @@
 package mohr.jonas.blockprobe.core.assertions
 
-import com.hypixel.hytale.math.vector.Vector3i
 import com.hypixel.hytale.server.core.inventory.ItemStack
 import com.hypixel.hytale.server.core.universe.world.meta.state.ItemContainerState
+import mohr.jonas.blockprobe.core.data.Position
 import mohr.jonas.blockprobe.core.fixture.TestBedUtils
 import org.assertj.core.api.Assertions.assertThat
 
 object BlockAssertions {
     @JvmStatic
-    fun assertIsBlock(position: Vector3i, blockId: String) {
+    fun assertIsBlock(position: Position, blockId: String) {
         val bed = AssertionContext.testBed.get()
         val unprojectedPosition = TestBedUtils.unproject(bed, position)
-        val actualBlockId = bed.world.getBlockType(unprojectedPosition)?.id
+        val actualBlockId = bed.world.getBlockType(unprojectedPosition.asVector3i())?.id
         assertThat(blockId)
             .`as`("Provided and actual block-ids should match")
             .isEqualTo(actualBlockId)
     }
 
     @JvmStatic
-    fun assertIsInventoryEmpty(position: Vector3i) {
+    fun assertIsInventoryEmpty(position: Position) {
         val bed = AssertionContext.testBed.get()
         val unprojectedPosition = TestBedUtils.unproject(bed, position)
         val state = bed.world.getState(unprojectedPosition.x, unprojectedPosition.y, unprojectedPosition.z, false)
@@ -32,7 +32,7 @@ object BlockAssertions {
     }
 
     @JvmStatic
-    fun assertInventoryContainsItems(position: Vector3i, allowAdditional: Boolean, vararg items: ItemStack) {
+    fun assertInventoryContainsItems(position: Position, allowAdditional: Boolean, vararg items: ItemStack) {
         val bed = AssertionContext.testBed.get()
         val unprojectedPosition = TestBedUtils.unproject(bed, position)
         val state = bed.world.getState(unprojectedPosition.x, unprojectedPosition.y, unprojectedPosition.z, false)

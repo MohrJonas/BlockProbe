@@ -1,18 +1,18 @@
 package mohr.jonas.blockprobe.core.fixture
 
-import com.hypixel.hytale.math.vector.Vector3i
 import mohr.jonas.blockprobe.core.data.BoundingBox
+import mohr.jonas.blockprobe.core.data.Position
 import mohr.jonas.blockprobe.core.exceptions.PositionOutsideOfTestBedException
 
 object TestBedUtils {
-    fun unproject(bed: TestBed, position: Vector3i): Vector3i {
+    fun unproject(bed: TestBed, position: Position): Position {
         val unprojectedPosition = bed.centerBlockPlacementPosition.add(position)
-        if (!isInBoundingBox(bed.boundingBox, unprojectedPosition))
+        if (!isInBoundingBox(bed.editableBoundingBox, unprojectedPosition))
             throw PositionOutsideOfTestBedException(bed, unprojectedPosition)
         return unprojectedPosition
     }
 
-    private fun isInBoundingBox(boundingBox: BoundingBox, position: Vector3i): Boolean {
+    private fun isInBoundingBox(boundingBox: BoundingBox, position: Position): Boolean {
         val origin = boundingBox.origin
         val x = position.x
         val y = position.y
