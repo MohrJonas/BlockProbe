@@ -1,0 +1,7 @@
+{
+  "Group": "mohr.jonas",
+  "Name": "BlockProbe-SampleMod",
+  "Version": "1.0.0",
+  "Description": "A sample mod showing off the usage of BlockProbe-Core with BlockProbe-JUnit6 as a runner",
+  "Main": "mohr.jonas.blockprobe.samplemod.Main"
+}

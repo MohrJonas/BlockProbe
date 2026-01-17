@@ -1,0 +1,7 @@
+{
+  "Group": "mohr.jonas",
+  "Name": "BlockProbe-Selftest",
+  "Version": "1.0.0",
+  "Description": "BlockProbe testing BlockProbe ... with BlockProbe, BlockProbeception",
+  "Main": "mohr.jonas.blockprobe.selftest.Main"
+}
