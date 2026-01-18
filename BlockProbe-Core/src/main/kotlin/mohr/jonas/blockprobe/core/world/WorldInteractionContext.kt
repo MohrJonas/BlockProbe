@@ -2,7 +2,7 @@ package mohr.jonas.blockprobe.core.world
 
 import com.hypixel.hytale.server.core.inventory.ItemStack
 import com.hypixel.hytale.server.core.inventory.transaction.ItemStackTransaction
-import com.hypixel.hytale.server.core.universe.world.meta.state.ItemContainerState
+import mohr.jonas.blockprobe.core.BlockUtils
 import mohr.jonas.blockprobe.core.data.Position
 import mohr.jonas.blockprobe.core.data.TestBedSize
 import mohr.jonas.blockprobe.core.fixture.TestBed
@@ -26,16 +26,7 @@ class WorldInteractionContext(private val testBed: TestBed) {
 
     fun addItemToBlockInventory(position: Position, item: ItemStack): ItemStackTransaction {
         val unprojectedPosition = TestBedUtils.unproject(testBed, position)
-        return (testBed
-            .world
-            .getState(
-                unprojectedPosition.x,
-                unprojectedPosition.y,
-                unprojectedPosition.z,
-                false
-            ) as ItemContainerState)
-            .itemContainer
-            .addItemStack(item)
+        return BlockUtils.getBlockInventory(testBed.world, unprojectedPosition).addItemStack(item)
     }
 
     fun wait(duration: Duration) {
@@ -47,5 +38,14 @@ class WorldInteractionContext(private val testBed: TestBed) {
             Thread.sleep(25)
     }
 
-    val bedSize = TestBedSize(testBed.editableBoundingBox.width, testBed.editableBoundingBox.height, testBed.editableBoundingBox.depth)
+    fun removeItemFromBlockInventory(position: Position, itemStack: ItemStack) {
+        val unprojectedPosition = TestBedUtils.unproject(testBed, position)
+        BlockUtils.getBlockInventory(testBed.world, unprojectedPosition).removeItemStack(itemStack)
+    }
+
+    val bedSize = TestBedSize(
+        testBed.editableBoundingBox.width,
+        testBed.editableBoundingBox.height,
+        testBed.editableBoundingBox.depth
+    )
 }
